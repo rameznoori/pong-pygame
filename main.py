@@ -44,6 +44,23 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     started = True
+        if ball_rect.left <=0 or ball_rect.left >= screen_width:
+            return
+        if ball_rect.top <0:
+            ball_accel_y *= -1
+            ball_rect.top = 0
+        if ball_rect.bottom > screen_height - ball_rect.height:
+            ball_accel_y *= -1
+            ball_rect.top = screen_height - ball_rect.height
+        if paddle_1_rect.colliderect(ball_rect) and paddle_1_rect.left < ball_rect.left:
+            ball_accel_x *= -1
+            ball_rect.left += 5
+        if paddle_2_rect.colliderect(ball_rect) and paddle_2_rect.left > ball_rect.left:
+            ball_accel_x *= -1
+            ball_rect.left -= 5
+        if started:
+            ball_rect.left += ball_accel_x * delta_time
+            ball_rect.top += ball_accel_y * delta_time
         pygame.draw.rect(screen, color_white, paddle_1_rect)
         pygame.draw.rect(screen, color_white, paddle_2_rect)
         pygame.draw.rect(screen, color_white, ball_rect)
