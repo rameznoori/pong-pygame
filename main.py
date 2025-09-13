@@ -25,57 +25,68 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Pong")
+    font = pygame.font.SysFont('Consolas', 30)
+    game_over_font = pygame.font.SysFont('Consolas', 50)
 
-    paddle_1_rect = pygame.Rect(30,0,7,100)
-    paddle_2_rect = pygame.Rect(screen_width - 50,0,7,100)
     paddle_1_move = 0
     paddle_2_move = 0
-    ball_rect = pygame.Rect(int(screen_width/2), int(screen_height/2), 25,25)
-    ball_accel_x = random.randint(2,4)*0.1
-    ball_accel_y = random.randint(2,4)*0.1
-
-    if random.randint(1,2) == 1:
-        ball_accel_x *= -1
-    if random.randint(1,2) == 1:
-        ball_accel_y *= -1
-
     clock = pygame.time.Clock()
     started = False
+    game_over = False
+
+    paddle_1_rect, paddle_2_rect, ball_rect, ball_accel_x, ball_accel_y = reset_game()
 
     while True:
         delta_time = clock.tick(60)
         screen.fill(color_black)
-        if not started:
-            font = pygame.font.SysFont('Consolas', 30)
+        if not started and not game_over:
             text = font.render('Press Space to Start', True, color_white)
             text_rect = text.get_rect()
             text_rect.center = (screen_width//2, screen_height//2)
             screen.blit(text, text_rect)
             pygame.display.flip()
-            # clock.tick(60)
-        
+        elif game_over:
+            text = game_over_font.render('Game Over', True, color_white)
+            text_rect = text.get_rect()
+            text_rect.center =  (screen_width//2, screen_height//2 - 40)
+            screen.blit(text, text_rect)
+            hint = font.render('Press Space to Replay', True, color_white)
+            hint_rect = hint.get_rect()
+            hint_rect.center = (screen_width//2, screen_height//2 + 40)
+            screen.blit(hint, hint_rect)
+            pygame.display.flip()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    started = True
-                if event.key == pygame.K_w:
-                    paddle_1_move = -0.5
-                if event.key == pygame.K_s:
-                    paddle_1_move = 0.5
-                if event.key == pygame.K_UP:
-                    paddle_2_move = -0.5
-                if event.key == pygame.K_DOWN:
-                    paddle_2_move = 0.5
+                    if game_over:
+                        paddle_1_rect, paddle_2_rect, ball_rect, ball_accel_x, ball_accel_y = reset_game()
+                        game_over = False
+                        started = False
+                        paddle_1_move = paddle_2_move = 0
+                    elif not started:
+                        started = True
+                if not game_over:
+                    if event.key == pygame.K_w:
+                        paddle_1_move = -0.5
+                    if event.key == pygame.K_s:
+                        paddle_1_move = 0.5
+                    if event.key == pygame.K_UP:
+                        paddle_2_move = -0.5
+                    if event.key == pygame.K_DOWN:
+                        paddle_2_move = 0.5
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_w or event.key == pygame.K_s:
                     paddle_1_move = 0.0
                 if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                     paddle_2_move = 0.0
         
-        if ball_rect.left <=0 or ball_rect.left >= screen_width:
-            return
+        if started and not game_over:
+            if ball_rect.left <= 0 or ball_rect.right >= screen_width:
+                game_over = True
+                started = False
         
         if ball_rect.top <0:
             ball_accel_y *= -1
@@ -91,9 +102,8 @@ def main():
             ball_accel_x *= -1
             ball_rect.left -= 5
         
-        if started:
-            ball_rect.left += int(ball_accel_x * delta_time)
-            ball_rect.top += int(ball_accel_y * delta_time)
+        ball_rect.left += int(ball_accel_x * delta_time)
+        ball_rect.top += int(ball_accel_y * delta_time)
         
         paddle_1_rect.top += paddle_1_move * delta_time
         paddle_2_rect.top += paddle_2_move * delta_time
