@@ -22,6 +22,12 @@ def reset_game():
 
     return paddle_1_rect, paddle_2_rect, ball_rect, ball_accel_x, ball_accel_y
 
+def draw_dotted_line(screen, color, x, y_start, y_end, dash_length=10, gap_length=10):
+    y = y_start
+    while y <y_end:
+        pygame.draw.line(screen, color, (x,y), (x,min(y + dash_length, y_end)))
+        y += dash_length + gap_length
+
 def main():
     pygame.init()
     screen = pygame.display.set_mode((screen_width, screen_height))
@@ -120,7 +126,8 @@ def main():
             paddle_2_rect.top = 0
         if paddle_2_rect.bottom > screen_height:
             paddle_2_rect.bottom = screen_height
-            
+
+        draw_dotted_line(screen, color_white, screen_width // 2,0,screen_height, dash_length=15, gap_length=10)    
         pygame.draw.rect(screen, color_white, paddle_1_rect)
         pygame.draw.rect(screen, color_white, paddle_2_rect)
         pygame.draw.rect(screen, color_red, ball_rect)
