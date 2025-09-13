@@ -25,15 +25,30 @@ def main():
     if random.randint(1,2) == 1:
         ball_accel_y *= -1
 
+    clock = pygame.time.Clock()
+    started = False
+
     while True:
         screen.fill(color_black)
+        if not started:
+            font = pygame.font.SysFont('Consolas', 30)
+            text = font.render('Press Space to Start', True, color_white)
+            text_rect = text.get_rect()
+            text_rect.center = (screen_width//2, screen_height//2)
+            screen.blit(text, text_rect)
+            pygame.display.flip()
+            clock.tick(60)
         for event in pygame.event.get():
             if event.type == pygame.QUIT():
                 return
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    started = True
         pygame.draw.rect(screen, color_white, paddle_1_rect)
         pygame.draw.rect(screen, color_white, paddle_2_rect)
         pygame.draw.rect(screen, color_white, ball_rect)
         pygame.display.update()
+        delta_time = clock.tick(60)
         
 if __name__ == '__main__':
     main()
