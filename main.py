@@ -14,8 +14,8 @@ def reset_game():
     paddle_1_rect = pygame.Rect(30, 0, 7, 100)
     paddle_2_rect = pygame.Rect(screen_width - 50, 0, 7, 100)
     ball_rect = pygame.Rect(int(screen_width/2), int(screen_height/2), 25, 25)
-    ball_accel_x = random.randint(2,4)*0.1
-    ball_accel_y = random.randint(2,4)*0.1
+    ball_accel_x = random.randint(2,4)*0.05
+    ball_accel_y = random.randint(2,4)*0.05
 
     if random.randint(1,2) == 1:
         ball_accel_x *= -1
@@ -35,7 +35,7 @@ def main():
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Pong")
     font = pygame.font.SysFont('Consolas', 30)
-    score_font = pygame.font.SysFont('Consolas', 40)
+    score_font = pygame.font.SysFont('Consolas', 30)
     game_over_font = pygame.font.SysFont('Consolas', 50)
     win_font = pygame.font.SysFont('Consolas', 60)
 
@@ -50,9 +50,14 @@ def main():
 
     paddle_1_rect, paddle_2_rect, ball_rect, ball_accel_x, ball_accel_y = reset_game()
 
+    speed_incease_interval = 5000
+    last_speed_increase_time = 0
+
     while True:
         delta_time = clock.tick(60)
         screen.fill(color_black)
+
+        current_time = pygame.time.get_ticks()
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -66,8 +71,10 @@ def main():
                         paddle_1_move = paddle_2_move = 0
                         score_p1 = 0
                         score_p2 = 0
+                        last_speed_increase_time = current_time
                     elif not started:
                         started = True
+                        last_speed_increase_time = current_time
                 if not game_over and started:
                     if event.key == pygame.K_w:
                         paddle_1_move = -0.5
@@ -94,10 +101,10 @@ def main():
         if game_over:
             text = game_over_font.render('Game Over', True, color_red)
             text_rect = text.get_rect()
-            text_rect.center =  (screen_width//2, screen_height//2 - 60)
+            text_rect.center =  (screen_width//2, screen_height//2 - 100)
             screen.blit(text, text_rect)
             
-            score_text = score_font.render(f"Player 1: {score_p1}  Player 2: {score_p2}", True, color_white)
+            score_text = score_font.render(f"Player 1: {score_p1} Player 2: {score_p2}", True, color_white)
             score_rect = score_text.get_rect()
             score_rect.center = (screen_width // 2, screen_height // 2 )
             screen.blit(score_text, score_rect)
@@ -109,7 +116,7 @@ def main():
             else:
                 winner_text = win_font.render("It's a Tie!", True, color_green)
             winner_rect = winner_text.get_rect()
-            winner_rect.center = (screen_width // 2, screen_height // 2+140)
+            winner_rect.center = (screen_width // 2, screen_height // 2+180)
             screen.blit(winner_text, winner_rect)
             
             hint = font.render('Press Space to Replay', True, color_blue)
@@ -119,6 +126,12 @@ def main():
             pygame.display.flip()
             continue
         
+        if started and not game_over:
+            if current_time - last_speed_increase_time >= speed_incease_interval:
+                ball_accel_x *= 1.1
+                ball_accel_y *= 1.1
+                last_speed_increase_time = current_time
+
         if ball_rect.left <= 0:
             score_p2 +=1
             game_over = True
