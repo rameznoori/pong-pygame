@@ -6,6 +6,7 @@ screen_width = 960
 
 color_black = (0,0,0)
 color_white = (255,255,255)
+color_red = (255, 0, 0)
 
 def reset_game():
     paddle_1_rect = pygame.Rect(30, 0, 7, 100)
@@ -122,7 +123,7 @@ def main():
             
         pygame.draw.rect(screen, color_white, paddle_1_rect)
         pygame.draw.rect(screen, color_white, paddle_2_rect)
-        pygame.draw.rect(screen, color_white, ball_rect)
+        pygame.draw.rect(screen, color_red, ball_rect)
         pygame.display.update() 
         
 if __name__ == '__main__':
