@@ -20,6 +20,11 @@ def main():
     ball_accel_x = random.randint(2,4)*0.1
     ball_accel_y = random.randint(2,4)*0.1
 
+    if random.randint(1,2) == 1:
+        ball_accel_x *= -1
+    if random.randint(1,2) == 1:
+        ball_accel_y *= -1
+
     while True:
         screen.fill(color_black)
         for event in pygame.event.get():
