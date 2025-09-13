@@ -92,7 +92,7 @@ def main():
             paddle_2_rect.top = 0
         if paddle_2_rect.bottom > screen_height:
             paddle_2_rect.bottom = screen_height
-        
+            
         pygame.draw.rect(screen, color_white, paddle_1_rect)
         pygame.draw.rect(screen, color_white, paddle_2_rect)
         pygame.draw.rect(screen, color_white, ball_rect)
