@@ -7,6 +7,20 @@ screen_width = 960
 color_black = (0,0,0)
 color_white = (255,255,255)
 
+def reset_game():
+    paddle_1_rect = pygame.Rect(30, 0, 7, 100)
+    paddle_2_rect = pygame.Rect(screen_width - 50, 0, 7, 100)
+    ball_rect = pygame.Rect(int(screen_width/2), int(screen_height/2), 25, 25)
+    ball_accel_x = random.randint(2,4)*0.1
+    ball_accel_y = random.randint(2,4)*0.1
+
+    if random.randint(1,2) == 1:
+        ball_accel_x *= -1
+    if random.randint(1,2) == 1:
+        ball_accel_y *= -1
+
+    return paddle_1_rect, paddle_2_rect, ball_rect, ball_accel_x, ball_accel_y
+
 def main():
     pygame.init()
     screen = pygame.display.set_mode((screen_width, screen_height))
