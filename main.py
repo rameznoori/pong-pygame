@@ -39,23 +39,7 @@ def main():
     while True:
         delta_time = clock.tick(60)
         screen.fill(color_black)
-        if not started and not game_over:
-            text = font.render('Press Space to Start', True, color_white)
-            text_rect = text.get_rect()
-            text_rect.center = (screen_width//2, screen_height//2)
-            screen.blit(text, text_rect)
-            pygame.display.flip()
-        elif game_over:
-            text = game_over_font.render('Game Over', True, color_white)
-            text_rect = text.get_rect()
-            text_rect.center =  (screen_width//2, screen_height//2 - 40)
-            screen.blit(text, text_rect)
-            hint = font.render('Press Space to Replay', True, color_white)
-            hint_rect = hint.get_rect()
-            hint_rect.center = (screen_width//2, screen_height//2 + 40)
-            screen.blit(hint, hint_rect)
-            pygame.display.flip()
-
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
@@ -68,7 +52,7 @@ def main():
                         paddle_1_move = paddle_2_move = 0
                     elif not started:
                         started = True
-                if not game_over:
+                if not game_over and started:
                     if event.key == pygame.K_w:
                         paddle_1_move = -0.5
                     if event.key == pygame.K_s:
@@ -82,11 +66,30 @@ def main():
                     paddle_1_move = 0.0
                 if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                     paddle_2_move = 0.0
+
+        if not started and not game_over:
+            text = font.render('Press Space to Start', True, color_white)
+            text_rect = text.get_rect()
+            text_rect.center = (screen_width//2, screen_height//2)
+            screen.blit(text, text_rect)
+            pygame.display.flip()
+            continue
+
+        if game_over:
+            text = game_over_font.render('Game Over', True, color_white)
+            text_rect = text.get_rect()
+            text_rect.center =  (screen_width//2, screen_height//2 - 40)
+            screen.blit(text, text_rect)
+            hint = font.render('Press Space to Replay', True, color_white)
+            hint_rect = hint.get_rect()
+            hint_rect.center = (screen_width//2, screen_height//2 + 40)
+            screen.blit(hint, hint_rect)
+            pygame.display.flip()
+            continue
         
-        if started and not game_over:
-            if ball_rect.left <= 0 or ball_rect.right >= screen_width:
-                game_over = True
-                started = False
+        if ball_rect.left <= 0 or ball_rect.right >= screen_width:
+            game_over = True
+            started = False
         
         if ball_rect.top <0:
             ball_accel_y *= -1
